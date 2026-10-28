@@ -1,0 +1,42 @@
+{
+  "f_28829b7be4a4": {
+    "id": "f_28829b7be4a4",
+    "name": "爸爸的家庭",
+    "ownerId": "u_9f8726417eee",
+    "members": [
+      "u_9f8726417eee"
+    ],
+    "inviteCode": "PUQV9Z",
+    "createdAt": "2026-10-23T09:14:34.649066+00:00"
+  },
+  "f_77ab304c6f94": {
+    "id": "f_77ab304c6f94",
+    "name": "bibabu1的家庭",
+    "ownerId": "u_7fc83c14260f",
+    "members": [
+      "u_7fc83c14260f"
+    ],
+    "inviteCode": "DWEVGP",
+    "createdAt": "2026-10-23T09:16:01.522744+00:00"
+  },
+  "f_0698c8db06e3": {
+    "id": "f_0698c8db06e3",
+    "name": "我的家庭",
+    "ownerId": "u_afab20534d61",
+    "members": [
+      "u_afab20534d61"
+    ],
+    "inviteCode": "P9YAVJ",
+    "createdAt": "2026-10-23T09:16:19.516562+00:00"
+  },
+  "f_033c0944bfb6": {
+    "id": "f_033c0944bfb6",
+    "name": "厨师的家庭",
+    "ownerId": "u_6cc042f82248",
+    "members": [
+      "u_6cc042f82248"
+    ],
+    "inviteCode": "8KENM4",
+    "createdAt": "2026-10-23T10:01:21.599434+00:00"
+  }
+}

@@ -1,0 +1,291 @@
+{
+  "families": {
+    "f_0698c8db06e3": {
+      "active": "2024-W43",
+      "weeks": {
+        "2024-W43": {
+          "mon": {
+            "breakfast": [
+              {
+                "id": "boiled-egg",
+                "qty": 1
+              },
+              {
+                "id": "red-bean-soup",
+                "qty": 1
+              }
+            ],
+            "lunch": [
+              {
+                "id": "rice",
+                "qty": 1
+              },
+              {
+                "id": "tomato-beef",
+                "qty": 1
+              },
+              {
+                "id": "stir-greens",
+                "qty": 1
+              }
+            ],
+            "dinner": [
+              {
+                "id": "shrimp-noodle",
+                "qty": 1
+              },
+              {
+                "id": "spinach-vermicelli",
+                "qty": 1
+              },
+              {
+                "id": "pumpkin-soup",
+                "qty": 1
+              }
+            ]
+          },
+          "tue": {
+            "breakfast": [
+              {
+                "id": "scallion-pancake",
+                "qty": 1
+              },
+              {
+                "id": "soy-milk",
+                "qty": 1
+              }
+            ],
+            "lunch": [
+              {
+                "id": "rice",
+                "qty": 1
+              },
+              {
+                "id": "kung-pao-chicken",
+                "qty": 1
+              },
+              {
+                "id": "mapo-tofu",
+                "qty": 1
+              }
+            ],
+            "dinner": [
+              {
+                "id": "beef-noodle",
+                "qty": 1
+              },
+              {
+                "id": "steamed-fish",
+                "qty": 1
+              },
+              {
+                "id": "winter-melon-soup",
+                "qty": 1
+              }
+            ]
+          },
+          "wed": {
+            "breakfast": [
+              {
+                "id": "steamed-bun",
+                "qty": 1
+              },
+              {
+                "id": "egg-custard",
+                "qty": 1
+              }
+            ],
+            "lunch": [
+              {
+                "id": "rice",
+                "qty": 1
+              },
+              {
+                "id": "braised-pork",
+                "qty": 1
+              },
+              {
+                "id": "lotus-root",
+                "qty": 1
+              }
+            ],
+            "dinner": [
+              {
+                "id": "dumplings",
+                "qty": 1
+              },
+              {
+                "id": "cucumber-salad",
+                "qty": 1
+              },
+              {
+                "id": "chicken-soup",
+                "qty": 1
+              }
+            ]
+          },
+          "thu": {
+            "breakfast": [
+              {
+                "id": "veggie-sandwich",
+                "qty": 1
+              },
+              {
+                "id": "tea-egg",
+                "qty": 1
+              }
+            ],
+            "lunch": [
+              {
+                "id": "rice",
+                "qty": 1
+              },
+              {
+                "id": "sweet-sour-ribs",
+                "qty": 1
+              },
+              {
+                "id": "oil-bean-sprouts",
+                "qty": 1
+              }
+            ],
+            "dinner": [
+              {
+                "id": "cold-noodle",
+                "qty": 1
+              },
+              {
+                "id": "radish-pickle",
+                "qty": 1
+              },
+              {
+                "id": "seaweed-egg-soup",
+                "qty": 1
+              }
+            ]
+          },
+          "fri": {
+            "breakfast": [
+              {
+                "id": "oat-congee",
+                "qty": 1
+              },
+              {
+                "id": "fruit-plate",
+                "qty": 1
+              }
+            ],
+            "lunch": [
+              {
+                "id": "rice",
+                "qty": 1
+              },
+              {
+                "id": "braised-chicken",
+                "qty": 1
+              },
+              {
+                "id": "garlic-broccoli",
+                "qty": 1
+              }
+            ],
+            "dinner": [
+              {
+                "id": "cold-noodle",
+                "qty": 1
+              },
+              {
+                "id": "braised-chicken",
+                "qty": 1
+              },
+              {
+                "id": "tofu-soup",
+                "qty": 1
+              }
+            ]
+          },
+          "sat": {
+            "breakfast": [
+              {
+                "id": "whole-wheat-toast",
+                "qty": 1
+              },
+              {
+                "id": "tea-egg",
+                "qty": 1
+              }
+            ],
+            "lunch": [
+              {
+                "id": "rice",
+                "qty": 1
+              },
+              {
+                "id": "pepper-pork",
+                "qty": 1
+              },
+              {
+                "id": "vinegar-cabbage",
+                "qty": 1
+              }
+            ],
+            "dinner": [
+              {
+                "id": "dumplings",
+                "qty": 1
+              },
+              {
+                "id": "radish-pickle",
+                "qty": 1
+              },
+              {
+                "id": "pumpkin-soup",
+                "qty": 1
+              }
+            ]
+          },
+          "sun": {
+            "breakfast": [
+              {
+                "id": "millet-porridge",
+                "qty": 1
+              },
+              {
+                "id": "soy-milk",
+                "qty": 1
+              }
+            ],
+            "lunch": [
+              {
+                "id": "rice",
+                "qty": 1
+              },
+              {
+                "id": "steamed-fish",
+                "qty": 1
+              },
+              {
+                "id": "mapo-tofu",
+                "qty": 1
+              }
+            ],
+            "dinner": [
+              {
+                "id": "cold-noodle",
+                "qty": 1
+              },
+              {
+                "id": "dumplings",
+                "qty": 1
+              },
+              {
+                "id": "seaweed-egg-soup",
+                "qty": 1
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

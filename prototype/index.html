@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>可爱风设计稿 · 今日食堂</title>
+  <link rel="stylesheet" href="./stage.css" />
+</head>
+<body>
+  <!--
+    原型舞台：真实页面放进 iframe，外面加一条「设计稿」说明栏。
+    用 iframe 而不是 document.write 的原因：
+      真实页面里有 <script type="module">，document.write 与模块脚本的
+      执行时序不分家，会把 DOM 再插一遍造成重影。
+      iframe 天然隔离，重复执行也只是刷新子文档，不会污染父页面。
+  -->
+  <script>
+    // 只在「目录式访问」时补末尾斜杠（如 /prototype 或 /prototype?x），
+    // 直接访问 /prototype/index.html 时路径已含文件名，不能再追加。
+    var p = location.pathname;
+    if (!p.endsWith('/') && !/\.[a-z0-9]+$/i.test(p)) {
+      location.replace(p + '/' + location.search + location.hash);
+    }
+  </script>
+
+  <div class="stage-bar" role="banner">
+    <span class="stage-bar__dot"></span>
+    <strong class="stage-bar__title">可爱风设计稿</strong>
+    <span class="stage-bar__hint">仅原型预览，不影响现有页面</span>
+
+    <nav class="stage-bar__links" aria-label="快速跳转">
+      <a href="?v=menu#menu" data-stage-link="menu">一周菜单</a>
+      <a href="?v=order#order" data-stage-link="order">点餐</a>
+      <a href="?v=recipes#recipes" data-stage-link="recipes">我的菜谱</a>
+      <a href="?v=nutrition#nutrition" data-stage-link="nutrition">营养</a>
+      <a href="?v=favorite#favorite" data-stage-link="favorite">收藏</a>
+      <a href="?v=family#family" data-stage-link="family">家庭管理 ★</a>
+    </nav>
+
+    <button class="stage-bar__close" id="stageClose" type="button" title="隐藏说明栏">×</button>
+  </div>
+
+  <iframe class="stage-frame" id="stageFrame" title="可爱风设计稿预览"></iframe>
+
+  <script type="module" src="./stage.mjs"></script>
+</body>
+</html>

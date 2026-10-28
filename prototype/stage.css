@@ -1,0 +1,110 @@
+/* stage.css — 原型舞台外框（只作用于原型页，不进产品样式） */
+
+:root {
+  --sb-h: 46px;
+}
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #fff7f2;
+  font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
+  overflow: hidden;
+}
+
+.stage-bar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: var(--sb-h);
+  padding: 0 14px;
+  background: linear-gradient(135deg, #ffeef5, #fff6e6);
+  border-bottom: 2px dashed #ffcbdc;
+  font-size: 12.5px;
+  color: #8a5f74;
+}
+.stage-bar__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ff7fa5;
+  box-shadow: 0 0 0 4px rgba(255, 127, 165, 0.2);
+  animation: sbPulse 2s ease-in-out infinite;
+}
+@keyframes sbPulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(255, 127, 165, 0.18); }
+  50% { box-shadow: 0 0 0 7px rgba(255, 127, 165, 0.05); }
+}
+.stage-bar__title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #e2597f;
+  letter-spacing: 0.4px;
+}
+.stage-bar__hint { color: #b7a7bb; }
+
+.stage-bar__links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.stage-bar__links::-webkit-scrollbar { display: none; }
+.stage-bar__links a {
+  padding: 4px 11px;
+  border-radius: 999px;
+  color: #a1798c;
+  text-decoration: none;
+  font-weight: 700;
+  white-space: nowrap;
+  border: 1.5px solid transparent;
+  transition: background 0.16s, color 0.16s, border-color 0.16s;
+}
+.stage-bar__links a:hover {
+  color: #e2597f;
+  background: #fff;
+  border-color: #ffcbdc;
+}
+.stage-bar__links a.is-active {
+  color: #fff;
+  background: linear-gradient(135deg, #ffa0bb, #ff7fa5);
+  border-color: #fff;
+  box-shadow: 0 4px 10px rgba(255, 127, 165, 0.3);
+}
+
+.stage-bar__close {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 50%;
+  color: #b7a7bb;
+  background: #fff;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  box-shadow: 0 2px 6px rgba(255, 157, 186, 0.25);
+}
+.stage-bar__close:hover { color: #e2597f; }
+
+body.is-bar-hidden { --sb-h: 0px; }
+body.is-bar-hidden .stage-bar { display: none; }
+
+.stage-frame {
+  display: block;
+  width: 100%;
+  height: calc(100% - var(--sb-h));
+  margin-top: var(--sb-h);
+  border: 0;
+  background: #fff7f2;
+}
+
+/* 窄屏：说明栏只留标题与关闭按钮 */
+@media (max-width: 720px) {
+  .stage-bar__hint { display: none; }
+  .stage-bar__title { font-size: 12px; }
+}

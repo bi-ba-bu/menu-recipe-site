@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#16181d" media="(prefers-color-scheme: dark)" />
+  <meta name="description" content="一周菜单与食谱展示 · 适配 Web 与 App" />
+  <title>今日食堂 · 菜单与食谱</title>
+  <link rel="stylesheet" href="./css/main.css" />
+</head>
+<body>
+  <!-- ══ 登录 / 注册页（未登录时显示） ═════════════════════════ -->
+  <div class="auth-page" id="authPage" hidden>
+    <div class="auth-card">
+      <div class="auth-brand">
+        <span class="auth-brand__mark" aria-hidden="true"><span data-icon="brand"></span></span>
+        <h1>今日食堂</h1>
+        <p>登录后管理你的一周菜单</p>
+      </div>
+
+      <div class="auth-tabs" role="tablist" aria-label="登录或注册">
+        <button class="auth-tab is-active" type="button" role="tab"
+                data-auth-tab="login" aria-selected="true">登录</button>
+        <button class="auth-tab" type="button" role="tab"
+                data-auth-tab="register" aria-selected="false">注册</button>
+      </div>
+
+      <form class="auth-form" id="authForm" novalidate>
+        <div class="field">
+          <label class="field__label" for="authUsername">用户名</label>
+          <input class="control" id="authUsername" name="username" type="text"
+                 autocomplete="username" placeholder="2-24 位中英文、数字或下划线" required />
+        </div>
+
+        <div class="field" id="displayNameField" hidden>
+          <label class="field__label" for="authDisplayName">昵称（可选）</label>
+          <input class="control" id="authDisplayName" name="displayName" type="text"
+                 autocomplete="nickname" placeholder="显示在家庭里的名字" />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="authPassword">密码</label>
+          <input class="control" id="authPassword" name="password" type="password"
+                 autocomplete="current-password" placeholder="至少 6 位" required />
+        </div>
+
+        <div class="field" id="confirmField" hidden>
+          <label class="field__label" for="authConfirm">确认密码</label>
+          <input class="control" id="authConfirm" name="confirm" type="password"
+                 autocomplete="new-password" placeholder="再输入一次" />
+        </div>
+
+        <p class="auth-error" id="authError" role="alert" hidden></p>
+
+        <button class="btn btn--primary auth-submit" id="authSubmit" type="submit">
+          登录
+        </button>
+      </form>
+
+      <p class="auth-hint" id="authHint">
+        首次使用请先注册。多个账号绑定同一家庭后，会共享同一份一周菜单。
+      </p>
+    </div>
+  </div>
+
+  <!-- ── 应用容器 ────────────────────────────────────────────── -->
+  <div class="app" id="app" hidden>
+
+    <!-- ══ 侧栏（Web 端） ═══════════════════════════════════════ -->
+    <aside class="sidebar" id="sidebar" aria-label="主导航">
+      <div class="sidebar__brand">
+        <span class="brand__mark" aria-hidden="true"><span data-icon="brand" class="brand__mark-ico"></span></span>
+        <span class="brand__text">
+          <strong>今日食堂</strong>
+          <small>菜单与食谱</small>
+        </span>
+      </div>
+
+      <nav class="sidebar__nav">
+        <a class="nav-item is-active" href="#menu" data-route="menu">
+          <span class="nav-item__icon" data-icon="calendar" aria-hidden="true"></span>
+          <span class="nav-item__text">一周菜单</span>
+        </a>
+        <a class="nav-item" href="#order" data-route="order">
+          <span class="nav-item__icon" data-icon="order" aria-hidden="true"></span>
+          <span class="nav-item__text">点餐</span>
+          <span class="nav-item__badge" id="orderCount" hidden>0</span>
+        </a>
+        <!--
+          食谱详情不再是导航项：它需要先选定一道菜，从点餐橱窗或我的菜谱点进更符合直觉。
+          #recipe 路由仍然保留可用（深链、历史记录回退都依赖它）。
+        -->
+        <a class="nav-item" href="#recipes" data-route="recipes">
+          <span class="nav-item__icon" data-icon="book" aria-hidden="true"></span>
+          <span class="nav-item__text">我的菜谱</span>
+          <span class="nav-item__badge" id="pendingCount" hidden>0</span>
+        </a>
+        <a class="nav-item" href="#nutrition" data-route="nutrition">
+          <span class="nav-item__icon" data-icon="leaf" aria-hidden="true"></span>
+          <span class="nav-item__text">营养概览</span>
+        </a>
+        <a class="nav-item" href="#favorite" data-route="favorite">
+          <span class="nav-item__icon" data-icon="star" aria-hidden="true"></span>
+          <span class="nav-item__text">我的收藏</span>
+          <span class="nav-item__badge" id="favCount" hidden>0</span>
+        </a>
+        <a class="nav-item" href="#family" data-route="family">
+          <span class="nav-item__icon" data-icon="users" aria-hidden="true"></span>
+          <span class="nav-item__text">家庭管理</span>
+        </a>
+      </nav>
+
+      <div class="sidebar__footer">
+        <div class="hint-card">
+          <p class="hint-card__title">本周小提示</p>
+          <p class="hint-card__text">每日饮水量建议 2000 ml，本周平均摄入 1560 千卡，注意补充深色蔬菜。</p>
+        </div>
+
+        <!-- 当前登录用户 -->
+        <div class="user-card">
+          <span class="user-card__avatar" id="userAvatar" aria-hidden="true">我</span>
+          <span class="user-card__info">
+            <span class="user-card__name" id="userName">未登录</span>
+            <span class="user-card__family" id="userFamily">—</span>
+          </span>
+          <button class="user-card__switch" id="userSwitchBtn" type="button"
+                  title="切换家庭" aria-label="切换家庭">
+            <span data-icon="swap" aria-hidden="true"></span>
+          </button>
+          <button class="user-card__out" id="logoutBtn" type="button" title="退出登录" aria-label="退出登录">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"
+                 fill="none" stroke="currentColor" stroke-width="1.8"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9.6 20H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3.6" />
+              <path d="M15.4 16.4 19.8 12l-4.4-4.4M19.8 12H9.2" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ══ 主区域 ═══════════════════════════════════════════════ -->
+    <div class="main">
+      <!-- 顶栏 -->
+      <header class="topbar">
+        <button class="icon-btn topbar__menu" id="menuToggle" aria-label="打开菜单" aria-expanded="false">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" />
+          </svg>
+        </button>
+
+        <div class="topbar__title">
+          <h1 id="pageTitle">一周菜单</h1>
+          <p id="pageSub" class="topbar__sub">10 月 20 日 - 10 月 26 日 · 第 1 周</p>
+        </div>
+
+        <!--
+          搜索只服务于「点餐」页的菜品橱窗，已下沉到点餐页内部；
+          顶栏不再提供全局搜索，避免与一周菜单、收藏等页面语义混淆。
+        -->
+        <span class="conn-badge" id="connBadge" hidden>本地模式</span>
+
+        <button class="icon-btn topbar__gen" id="generateBtn" type="button"
+                data-generate aria-label="一键生成本周菜单" title="一键生成本周菜单">
+          <span data-icon="spark" class="gen-ico" aria-hidden="true"></span>
+          <span class="topbar__gen-text">一键生成</span>
+        </button>
+
+        <button class="icon-btn" id="themeToggle" aria-label="切换深色模式" title="切换深色模式">
+          <span id="themeIcon" class="theme-ico" aria-hidden="true"></span>
+        </button>
+      </header>
+
+      <!-- 视图区 -->
+      <main class="content" id="content">
+
+        <!-- ── 视图 1：一周菜单 ─────────────────────────────── -->
+        <section class="view is-active" id="view-menu" aria-labelledby="viewMenuTitle">
+          <h2 class="sr-only" id="viewMenuTitle">一周菜单</h2>
+
+          <!-- 今日概览 -->
+          <div class="today-card">
+            <div class="today-card__head">
+              <span class="today-card__badge">今天 · <span id="todayLabel">周四</span></span>
+              <span class="today-card__weather">🌤 22°C 多云</span>
+            </div>
+            <p class="today-card__desc">今日推荐：番茄炖牛腩 + 蒜蓉西兰花，蛋白质与膳食纤维搭配均衡。</p>
+            <div class="today-card__metrics">
+              <div class="metric">
+                <span class="metric__value" id="mCalorie">0</span>
+                <span class="metric__label">千卡</span>
+              </div>
+              <div class="metric">
+                <span class="metric__value" id="mProtein">0</span>
+                <span class="metric__label">蛋白质 g</span>
+              </div>
+              <div class="metric">
+                <span class="metric__value" id="mFiber">0</span>
+                <span class="metric__label">膳食纤维 g</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 星期切换 -->
+          <div class="day-tabs" role="tablist" aria-label="选择日期" id="dayTabs"></div>
+
+          <!-- 三餐列表 -->
+          <div class="meal-list" id="mealList"></div>
+        </section>
+
+        <!-- ── 视图 2：点餐 ─────────────────────────────────── -->
+        <section class="view" id="view-order" aria-labelledby="viewOrderTitle">
+          <h2 class="sr-only" id="viewOrderTitle">点餐</h2>
+
+          <div class="order-layout">
+            <!-- 左：菜品橱窗 -->
+            <div class="order-main">
+              <!--
+                操作条：左侧是当前生效的筛选条件，右侧是菜谱维护入口。
+                把「新增菜谱 / 我的菜谱」放在这里，是因为点餐页本身就是认识菜品的入口。
+              -->
+              <div class="order-toolbar" id="orderToolbar">
+                <div class="order-toolbar__info">
+                  <span class="order-toolbar__label">当前筛选</span>
+                  <span class="order-toolbar__value" id="orderFilterLabel">全部菜品</span>
+                </div>
+                <div class="order-toolbar__actions">
+                  <button class="btn btn--primary" id="newRecipeBtn" type="button" data-new-recipe>
+                    <span class="btn__ico" data-icon="plus" aria-hidden="true"></span>
+                    新增菜谱
+                  </button>
+                  <button class="btn btn--ghost" id="myRecipesBtn" type="button" data-route="recipes">
+                    <span class="btn__ico" data-icon="book" aria-hidden="true"></span>
+                    我的菜谱
+                  </button>
+                </div>
+              </div>
+
+              <!-- 点餐页内搜索：只过滤下方菜品橱窗 -->
+              <div class="catalog-search" role="search">
+                <svg class="catalog-search__icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none" />
+                  <path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                <input id="catalogSearch" type="search"
+                       placeholder="搜索菜品或食材…" aria-label="搜索点餐页的菜品或食材"
+                       autocomplete="off" />
+                <button class="catalog-search__clear" id="catalogSearchClear" type="button"
+                        aria-label="清空搜索" hidden>
+                  <span data-icon="close" aria-hidden="true"></span>
+                </button>
+              </div>
+
+              <!-- 分类筛选 -->
+              <div class="chips" id="dishChips" role="tablist" aria-label="按分类筛选菜品"></div>
+
+              <!-- 菜品列表 -->
+              <div class="order-catalog" id="orderCatalog"></div>
+            </div>
+
+            <!-- 右：本周点餐篮 -->
+            <aside class="order-basket" aria-labelledby="basketTitle">
+              <div class="panel order-basket__panel">
+                <div class="panel__head">
+                  <h3 id="basketTitle">本周点餐</h3>
+                  <span class="muted" id="basketSummary">0 道 · 0 千卡</span>
+                </div>
+
+                <div class="order-basket__body" id="basketBody"></div>
+
+                <div class="order-basket__foot">
+                  <button class="btn btn--ghost" id="clearOrders" type="button">清空</button>
+                  <button class="btn btn--primary" id="confirmOrders" type="button">
+                    <span class="btn__ico" data-icon="check" aria-hidden="true"></span>
+                    确认本周菜单
+                  </button>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <!-- ── 视图 3：食谱详情（仅可从菜品进入，不占导航位） ── -->
+        <section class="view" id="view-recipe" aria-labelledby="viewRecipeTitle">
+          <h2 class="sr-only" id="viewRecipeTitle">食谱详情</h2>
+          <div id="recipeDetail"></div>
+        </section>
+
+        <!-- ── 视图 3.5：我的菜谱（维护中心） ───────────────── -->
+        <section class="view" id="view-recipes" aria-labelledby="viewRecipesTitle">
+          <h2 class="sr-only" id="viewRecipesTitle">我的菜谱</h2>
+
+          <!-- 顶部操作 + 标签页 -->
+          <div class="recipes-head">
+            <div class="recipes-head__tabs" id="recipesTabs" role="tablist" aria-label="菜谱分类"></div>
+            <button class="btn btn--primary recipes-head__new" type="button" data-new-recipe>
+              <span class="btn__ico" data-icon="plus" aria-hidden="true"></span>
+              新增菜谱
+            </button>
+          </div>
+
+          <!-- 列表 -->
+          <div class="recipes-list" id="recipesList"></div>
+        </section>
+
+        <!-- ── 视图 4：营养概览 ─────────────────────────────── -->
+        <section class="view" id="view-nutrition" aria-labelledby="viewNutTitle">
+          <h2 class="sr-only" id="viewNutTitle">营养概览</h2>
+
+          <div class="panel">
+            <div class="panel__head">
+              <h3>每日热量与蛋白</h3>
+              <span class="muted">单位：千卡 / 克</span>
+            </div>
+            <div class="chart" id="calorieChart" role="img" aria-label="每日热量与蛋白质摄入柱状图"></div>
+            <div class="chart-legend">
+              <span><i class="legend__dot legend__dot--cal"></i>热量（千卡）</span>
+              <span><i class="legend__dot legend__dot--pro"></i>蛋白质（克）</span>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel__head">
+              <h3>今日营养完成度</h3>
+              <span class="muted">相对每日建议量</span>
+            </div>
+            <div class="nutri-bars" id="nutriBars"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel__head"><h3>饮水记录</h3></div>
+            <div class="water-wrap">
+              <div class="water-ring" id="waterRing">
+                <span class="water-ring__text"><strong id="waterPct">75</strong>%</span>
+              </div>
+              <div class="water-info">
+                <p><strong id="waterNow">1500</strong> / 2000 ml</p>
+                <p class="muted">建议每 2 小时补充 200 ml</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── 视图 5：我的收藏 ─────────────────────────────── -->
+        <section class="view" id="view-favorite" aria-labelledby="viewFavTitle">
+          <h2 class="sr-only" id="viewFavTitle">我的收藏</h2>
+          <div id="favoriteList"></div>
+        </section>
+
+        <!-- ── 视图 6：家庭管理 ─────────────────────────────── -->
+        <section class="view" id="view-family" aria-labelledby="viewFamilyTitle">
+          <h2 class="sr-only" id="viewFamilyTitle">家庭管理</h2>
+
+          <!-- 加入 / 创建家庭 -->
+          <div class="family-actions">
+            <form class="family-join" id="familyJoinForm">
+              <label class="field__label" for="familyCode">输入邀请码加入家庭</label>
+              <div class="family-join__row">
+                <input class="control family-join__input" id="familyCode" name="code"
+                       type="text" maxlength="10" placeholder="6 位邀请码，如 K7M2PQ"
+                       autocomplete="off" spellcheck="false" />
+                <button class="btn btn--primary" id="familyJoinBtn" type="submit">加入</button>
+              </div>
+              <p class="family-join__hint">向家长索取邀请码。加入后可在上方切换家庭。</p>
+            </form>
+
+            <form class="family-create" id="familyCreateForm">
+              <label class="field__label" for="familyName">创建新家庭</label>
+              <div class="family-join__row">
+                <input class="control family-join__input" id="familyName" name="name"
+                       type="text" maxlength="20" placeholder="家庭名称" autocomplete="off" />
+                <button class="btn btn--ghost" id="familyCreateBtn" type="submit">创建</button>
+              </div>
+              <p class="family-join__hint">创建后你将成为该家庭的家长。</p>
+            </form>
+          </div>
+
+          <!-- 当前家庭详情 -->
+          <div id="familyDetail"></div>
+
+          <!-- 我加入的家庭列表 -->
+          <div class="panel">
+            <div class="panel__head">
+              <h3>我的家庭</h3>
+              <span class="muted" id="familyCountText">—</span>
+            </div>
+            <div class="family-list" id="familyList"></div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- ══ 点餐悬浮操作条（仅 App 端） ══════════════════════ -->
+      <div class="order-bar" id="orderBar" aria-hidden="true">
+        <div class="order-bar__info">
+          <span class="order-bar__count" id="orderBarCount">已点 0 道</span>
+          <span class="order-bar__sum" id="orderBarSum">合计 0 千卡</span>
+        </div>
+        <button class="btn btn--primary order-bar__btn" id="orderBarBtn" type="button">
+          查看点餐
+        </button>
+      </div>
+
+      <!-- ══ 底部导航（App 端） ══════════════════════════════ -->
+      <nav class="tabbar" aria-label="底部导航">
+        <a class="tab-item is-active" href="#menu" data-route="menu">
+          <span class="tab-item__icon" data-icon="calendar" aria-hidden="true"></span>
+          <span class="tab-item__text">菜单</span>
+        </a>
+        <a class="tab-item" href="#order" data-route="order">
+          <span class="tab-item__icon" data-icon="order" aria-hidden="true"></span>
+          <span class="tab-item__text">点餐</span>
+          <span class="tab-item__badge" id="tabOrderBadge" hidden>0</span>
+        </a>
+        <a class="tab-item" href="#recipes" data-route="recipes">
+          <span class="tab-item__icon" data-icon="book" aria-hidden="true"></span>
+          <span class="tab-item__text">菜谱</span>
+          <span class="tab-item__badge" id="tabPendingBadge" hidden>0</span>
+        </a>
+        <a class="tab-item" href="#nutrition" data-route="nutrition">
+          <span class="tab-item__icon" data-icon="leaf" aria-hidden="true"></span>
+          <span class="tab-item__text">营养</span>
+        </a>
+        <a class="tab-item" href="#favorite" data-route="favorite">
+          <span class="tab-item__icon" data-icon="star" aria-hidden="true"></span>
+          <span class="tab-item__text">收藏</span>
+        </a>
+        <a class="tab-item" href="#family" data-route="family">
+          <span class="tab-item__icon" data-icon="users" aria-hidden="true"></span>
+          <span class="tab-item__text">家庭</span>
+        </a>
+      </nav>
+    </div>
+  </div>
+
+  <!--
+    通用弹窗：确认 / 输入 / 危险操作
+    替代 window.confirm / window.prompt —— 原生弹窗在 App 端（WebView）
+    可能被拦截或样式不可控，统一用页面内的弹窗组件。
+  -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal__panel">
+      <div class="modal__head">
+        <h2 class="modal__title" id="modalTitle">确认</h2>
+        <button class="modal__close" id="modalClose" type="button" aria-label="关闭">
+          <span data-icon="close" aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal__body" id="modalBody"></div>
+      <div class="modal__foot">
+        <button class="btn btn--ghost" id="modalCancel" type="button">取消</button>
+        <button class="btn btn--primary" id="modalOk" type="button">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!--
+    菜谱编辑弹窗。
+    与通用 dialog 弹窗分开：它字段多、需要滚动，而且确认按钮要校验表单，
+    单独一套控制器比往 dialog 里塞特例更清晰。样式沿用 .modal 设计语言。
+  -->
+  <div class="modal modal--form" id="recipeModal" role="dialog" aria-modal="true"
+       aria-labelledby="recipeModalTitle">
+    <div class="modal__panel modal__panel--wide">
+      <div class="modal__head">
+        <h2 class="modal__title" id="recipeModalTitle">新增菜谱</h2>
+        <button class="modal__close" id="recipeModalClose" type="button" aria-label="关闭">
+          <span data-icon="close" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div class="modal__body" id="recipeModalBody"><!-- 表单由 app.js 渲染 --></div>
+
+      <div class="modal__foot">
+        <button class="btn btn--ghost" id="recipeModalCancel" type="button">取消</button>
+        <button class="btn btn--primary" id="recipeModalSave" type="button">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast 提示 -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

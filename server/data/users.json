@@ -1,0 +1,44 @@
+{
+  "u_9f8726417eee": {
+    "id": "u_9f8726417eee",
+    "username": "papa",
+    "displayName": "爸爸",
+    "passwordHash": "a6adac65990bde3f8e4848cf293b4807c907fcbad39e5d9c9f737220f9edaf19",
+    "salt": "b2770881c7ce648902f5caffcb85d3cc",
+    "iterations": 200000,
+    "familyId": "f_2df99e9bd57c",
+    "createdAt": "2026-10-23T09:14:34.531872+00:00"
+  },
+  "u_afab20534d61": {
+    "id": "u_afab20534d61",
+    "username": "bibabu",
+    "displayName": "bibabu",
+    "passwordHash": "0e584050b9b4a3eb88fd5648d3781263f610fd61b5ed1195ddea02f193a7aea6",
+    "salt": "dcee90d2114a86ecab3fff30f8c9e99f",
+    "iterations": 200000,
+    "familyId": "f_d158a7f02b4c",
+    "createdAt": "2026-10-23T09:15:40.963023+00:00",
+    "lastFamilyId": "f_c3ec95c10944"
+  },
+  "u_7fc83c14260f": {
+    "id": "u_7fc83c14260f",
+    "username": "bibabu1",
+    "displayName": "bibabu1",
+    "passwordHash": "b8a624ec1ade6fba1434574c18278c4d479478774f63f87eb50561720e4ac6a9",
+    "salt": "863bff7399c51fc889dc84f766eaca90",
+    "iterations": 200000,
+    "familyId": "f_4ae189e367d8",
+    "createdAt": "2026-10-23T09:16:01.428851+00:00",
+    "lastFamilyId": "f_c3ec95c10944"
+  },
+  "u_6cc042f82248": {
+    "id": "u_6cc042f82248",
+    "username": "chef",
+    "displayName": "厨师",
+    "passwordHash": "2c46d42e841f2aac11fb1c1a951f81926b3bdb7eb5d146334b6f5ce4b6221ee0",
+    "salt": "75496e310ce8b1d5803cb2873aea13f0",
+    "iterations": 200000,
+    "familyId": "f_de4004641536",
+    "createdAt": "2026-10-23T10:01:21.483831+00:00"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "week": {
+    "key": "2024-W43",
+    "label": "第 1 周",
+    "range": "10/20 - 10/26"
+  },
+  "nutritionTarget": {
+    "calorie": 2000,
+    "protein": 75,
+    "fat": 65,
+    "carb": 275,
+    "fiber": 25
+  },
+  "water": {
+    "current": 1500,
+    "target": 2000
+  },
+  "weather": {
+    "text": "22°C 多云"
+  }
+}
