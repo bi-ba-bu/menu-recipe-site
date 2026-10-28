@@ -22,6 +22,8 @@ import {
 import { getDishIcon, UI_ICONS, starHtml } from './icons.js';
 import * as Order from './order.js';
 import * as Api from './api.js';
+import * as Appearance from './appearance.js';
+import * as CuteSkin from './skins/cute-skin.js';
 
 /* ── §1 状态 ─────────────────────────────────────────────────── */
 
@@ -1053,6 +1055,10 @@ function renderFamilyPage() {
   const list = state.families?.items || [];
   const detail = state.familyDetail;
 
+  // 外观面板（明暗 + 风格）先渲染：它是设备级偏好，与当前家庭无关，
+  // 而且必须在 detail 为空（还没加入任何家庭）时也能看到。
+  renderAppearancePanel();
+
   // 家庭切换列表
   $('#familyCountText').textContent = `共 ${list.length} 个`;
   $('#familyList').innerHTML = list.length
@@ -1081,6 +1087,7 @@ function renderFamilyPage() {
   const host = $('#familyDetail');
   if (!detail) {
     host.innerHTML = '';
+    refreshCuteAvatars();
     return;
   }
 
@@ -1149,6 +1156,10 @@ function renderFamilyPage() {
         }
       </div>
     </div>`;
+
+  // 可爱风格下把单字圆点头像换成分角色 Q 版 SVG。
+  // 默认风格下这次调用只做还原（无残留节点），等于空操作。
+  refreshCuteAvatars();
 }
 
 /** 切换家庭：成功后整页数据都要重新加载 */
@@ -2809,36 +2820,34 @@ $('#menuToggle').addEventListener('click', () => {
 });
 scrim.addEventListener('click', closeSidebar);
 
-/* —— 主题切换 —— */
+/* —— 外观：明暗 + 风格（家庭设置里切换） ——
+ *
+ * 两个维度互不干扰：
+ *   data-theme = light | dark   明暗，沿用原来的存储键与行为
+ *   data-skin  = cute           风格，不设置即默认暖橙风
+ * 具体实现见 js/appearance.js（面板与读写）与 js/skins/cute-skin.js（头像增强）。
+ */
 
-function initTheme() {
-  const saved = localStorage.getItem('menu-recipe-theme');
-  if (saved === 'dark' || saved === 'light') {
-    document.documentElement.dataset.theme = saved;
+/** 渲染家庭设置里的外观面板，并绑定交互 */
+function renderAppearancePanel() {
+  const host = $('#appearanceHost');
+  if (!host) return;
+  host.innerHTML = Appearance.appearancePanelHtml();
+  Appearance.bindAppearancePanel(host.querySelector('#appearancePanel'), () => {
+    // 风格变了：家庭页的头像要跟着换（默认风格会还原成单字圆点）
+    refreshCuteAvatars();
+  });
+}
+
+/** 刷新可爱风对家庭页的增强（默认风格下是空操作式还原） */
+function refreshCuteAvatars() {
+  if (state.route !== 'family') return;
+  try {
+    CuteSkin.refreshCuteAvatars();
+  } catch {
+    /* 皮肤增强失败不该影响主流程 */
   }
-  syncThemeIcon();
 }
-
-function syncThemeIcon() {
-  const isDark =
-    document.documentElement.dataset.theme === 'dark' ||
-    (!document.documentElement.dataset.theme &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches);
-  // 深色模式下显示太阳（点击切回浅色），反之显示月亮
-  $('#themeIcon').innerHTML = isDark ? UI_ICONS.sun : UI_ICONS.moon;
-}
-
-$('#themeToggle').addEventListener('click', () => {
-  const isDark =
-    document.documentElement.dataset.theme === 'dark' ||
-    (!document.documentElement.dataset.theme &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches);
-  const next = isDark ? 'light' : 'dark';
-  document.documentElement.dataset.theme = next;
-  localStorage.setItem('menu-recipe-theme', next);
-  syncThemeIcon();
-  toast(next === 'dark' ? '已切换深色模式' : '已切换浅色模式');
-});
 
 /* —— 窗口尺寸变化：跨断点时关闭抽屉 —— */
 
@@ -3278,7 +3287,9 @@ async function boot() {
     if (svg) slot.innerHTML = svg;
   });
 
-  initTheme();
+  // 恢复上次的外观选择（明暗 + 风格）。必须在首屏渲染前执行，
+  // 否则会先闪一下默认暖橙再跳到可爱风。
+  Appearance.initAppearance();
 
   // 认证相关事件
   $$('[data-auth-tab]').forEach((tab) => {

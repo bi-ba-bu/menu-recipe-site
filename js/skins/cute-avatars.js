@@ -1,9 +1,9 @@
 /**
- * avatars.js — 可爱风格 Q 版头像（原型专用）
+ * cute-avatars.js — 可爱风格 Q 版头像
  *
- * 为什么是手绘 SVG 而不是图片/emoji：
- *   · 零外部依赖，随主题色变化，任意尺寸都清晰
- *   · 颜色来自 CSS 变量，深色模式自动适配
+ * 为什么是手绘 SVG 而不是图片 / emoji：
+ *   · 零外部依赖，任意尺寸都清晰，评审现场断网也能看
+ *   · 不依赖系统 emoji 字体（不同设备渲染差异大，部分显示为黑白剪影）
  *   · 造型可复用：家庭主卡用大号、成员行用小号、家庭列表用迷你号
  *
  * 提供的形象：
@@ -12,13 +12,16 @@
  *   kid     —— 娃娃头 + 呆毛 + 腮红
  *   grandma —— 发髻 + 圆框眼镜
  *   grandpa —— 侧边白发 + 圆框眼镜
- *   cat     —— 猫咪（成员数只有 1 人时的「独居小可爱」形象）
+ *   cat     —— 猫咪（成员只有 1 人时的「饭搭子」替补）
  *
  * 每个形象只换「发型 + 眼型」，脸部、腮红、嘴巴共用，保证一组头像画风统一。
+ *
+ * 【什么时候用】
+ *   只有开启可爱风格（data-skin="cute"）时，app.js 才会把家庭区的
+ *   单字圆点头像换成这些图形。默认风格下完全不调用本模块。
  */
 
 const SKIN = '#ffdcc6';
-const SKIN_SHADE = '#ffc9ad';
 const BLUSH = '#ff9db4';
 const INK = '#5a4552';
 
@@ -157,15 +160,16 @@ const KEYWORDS = [
 /** 兜底顺序：保证同一页里多个人不会撞脸 */
 const FALLBACK = ['kid', 'mom', 'dad', 'cat', 'grandma', 'grandpa'];
 
-/** 记录每个形象被用了几次，用于兜底时错开 */
-const usedCount = new Map();
-
+/**
+ * 昵称 → 形象 key。
+ * @param {string} name 成员昵称
+ * @param {number} seedIndex 同一页内的出现序号（≥1），关键词没命中时靠它错开
+ */
 export function pickAvatarName(name = '', seedIndex = 0) {
   const raw = String(name);
   for (const [re, key] of KEYWORDS) {
     if (re.test(raw)) return key;
   }
-  // 关键词没命中：按页面内出现顺序依次取，避免两个人都变成同一张脸
   if (seedIndex > 0) {
     const n = Number.isFinite(seedIndex) ? seedIndex : 1;
     return FALLBACK[(n - 1) % FALLBACK.length];
@@ -181,28 +185,24 @@ export function avatarSvg(key) {
 }
 
 /**
- * 大号头像（家庭主卡里并排两个）
- * @param {string[]} names 成员名列表，最多取前两个
+ * 家庭主卡里的并排双人头像。
+ *
+ * 固定渲染两张脸——这正是「同一个家庭展示两张可爱头像」的需求。
+ * 名字由调用方（cute-skin.js）保证至少有 2 个：
+ * 真实成员 ≥2 用真实名字，否则补齐演示名字。
+ *
+ * @param {string[]} names 成员名列表，取前两个
  */
 export function cutePairHtml(names = []) {
-  const picked = names.slice(0, 2).map((n, i) => ({ name: n, key: pickAvatarName(n, i) }));
-
-  // 只有一个人：给一个更大的单人头像 + 一只小猫咪陪伴
-  if (picked.length <= 1) {
-    const main = picked[0]?.key || 'kid';
-    return `
-      <div class="cute-pair is-lone" aria-hidden="true">
-        <span class="cute-pair__spark">✦</span>
-        <span class="avatar-cute avatar-cute--lone">${avatarSvg(main)}</span>
-        <span class="avatar-cute avatar-cute--pet">${avatarSvg('cat')}</span>
-      </div>`;
-  }
+  // seedIndex 从 1 开始：0 会走 hash 分支，两个人可能撞脸；
+  // 传出现序号才会按 FALLBACK 顺序错开。
+  const picked = names.slice(0, 2).map((n, i) => ({ name: n, key: pickAvatarName(n, i + 1) }));
 
   return `
     <div class="cute-pair" aria-hidden="true">
       <span class="cute-pair__spark">✦</span>
-      <span class="avatar-cute avatar-cute--a">${avatarSvg(picked[0].key)}</span>
-      <span class="avatar-cute avatar-cute--b">${avatarSvg(picked[1].key)}</span>
+      <span class="avatar-cute avatar-cute--a">${avatarSvg(picked[0]?.key || 'kid')}</span>
+      <span class="avatar-cute avatar-cute--b">${avatarSvg(picked[1]?.key || 'mom')}</span>
       <span class="cute-pair__heart">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-8.2-4.9-8.2-10.3A4.8 4.8 0 0 1 12 7.4a4.8 4.8 0 0 1 8.2 3.3C20.2 16.1 12 21 12 21Z"/></svg>
       </span>
@@ -218,7 +218,8 @@ export function memberAvatarHtml(name, index = 0) {
 export function miniPairHtml(names = []) {
   const picked = names.slice(0, 2);
   const list = picked.length ? picked : ['', ''];
+  // 同 cutePairHtml：seedIndex 从 1 起，保证两张脸不同
   return `<span class="family-mini-avatars" aria-hidden="true">${list
-    .map((n, i) => `<span class="avatar-cute">${avatarSvg(pickAvatarName(n, i))}</span>`)
+    .map((n, i) => `<span class="avatar-cute">${avatarSvg(pickAvatarName(n, i + 1))}</span>`)
     .join('')}</span>`;
 }

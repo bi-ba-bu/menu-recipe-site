@@ -296,7 +296,14 @@ export const UI_ICONS = {
       <path d="M3.4 11.4h17.2c0 4.5-3.8 7.8-8.6 7.8s-8.6-3.3-8.6-7.8Z"/>
       <path d="M2.2 11.4h19.6"/>
       <path d="M8.6 6.6c0-1.6 1.4-2.2 1.4-3.8M13.4 6.6c0-1.6 1.4-2.2 1.4-3.8" opacity=".7"/>
-    </g>`)
+    </g>`),
+
+  /* 调色盘（外观设置区的小标题图标） */
+  palette: line(`
+    <path d="M12 3.4a8.6 8.6 0 1 0 0 17.2c1.2 0 1.9-.8 1.9-1.8 0-.5-.2-.9-.5-1.3-.3-.4-.5-.8-.5-1.2 0-1 .8-1.8 1.8-1.8h1.4a3.4 3.4 0 0 0 3.4-3.4c0-4.3-4.1-7.7-7.5-7.7Z"/>
+    <circle cx="8.6" cy="9.4" r="1.1" fill="currentColor" stroke="none"/>
+    <circle cx="12.4" cy="7.6" r="1.1" fill="currentColor" stroke="none"/>
+    <circle cx="15.6" cy="10.2" r="1.1" fill="currentColor" stroke="none"/>`)
 };
 
 /** 已收藏 / 未收藏的星标 HTML（保持尺寸随字号） */

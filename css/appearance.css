@@ -1,0 +1,221 @@
+/**
+ * appearance.css — 外观设置面板（家庭设置内）
+ *
+ * 位置：css/main.css 之后、css/skins/cute.css 之前加载。
+ *
+ * 为什么单独成文件：
+ *   这个面板要在「默认风格」和「可爱风格」下都能正常显示，
+ *   所以它只能使用 main.css 的设计令牌，不能依赖任何皮肤变量。
+ *   可爱风会对它做一层粉色增强（见 css/skins/cute.css §21），
+ *   靠加载顺序与 [data-skin] 作用域覆盖，不需要在这里写分支。
+ *
+ * 结构：
+ *   .appearance-panel            面板本体（.panel 的扩展）
+ *   .appearance-group            一组选项（明暗 / 风格）
+ *   .choice-grid                 选项卡片容器
+ *   .choice-card                 单个选项（原生 radio 承载语义）
+ */
+
+/* ── 面板 ────────────────────────────────────────────────────── */
+
+.appearance-panel__ico {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+  vertical-align: -3px;
+  color: var(--brand);
+}
+.appearance-panel__ico svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* 分组：明暗一组、风格一组，中间一条细分割 */
+.appearance-group + .appearance-group {
+  margin-top: var(--gap-md);
+  padding-top: var(--gap-md);
+  border-top: 1px dashed var(--border);
+}
+.appearance-group__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--gap-xs);
+  margin-bottom: var(--gap-xs);
+}
+.appearance-group__title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text);
+}
+.appearance-group__value {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+/* ── 选项卡片 ────────────────────────────────────────────────── */
+
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gap-xs);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0; /* fieldset 默认 min-width: min-content，会在窄屏撑破布局 */
+}
+
+.choice-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--gap-xs);
+  padding: 10px 11px;
+  cursor: pointer;
+  background: var(--bg-panel);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  transition: transform 0.16s var(--ease), border-color 0.16s, box-shadow 0.16s,
+    background-color 0.16s;
+}
+.choice-card:hover {
+  transform: translateY(-1px);
+  border-color: var(--border-strong);
+}
+.choice-card.is-active {
+  border-color: var(--brand);
+  background: color-mix(in srgb, var(--brand-soft) 55%, var(--bg-panel));
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--brand) 18%, transparent);
+}
+
+/* 原生 radio：只保留语义与键盘能力，视觉上隐藏 */
+.choice-card__radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+.choice-card:focus-within {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* 四色预览：底色 / 卡片底 / 主色 / 辅色 */
+.choice-card__preview {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 10px);
+  grid-template-rows: repeat(2, 10px);
+  gap: 2px;
+  padding: 4px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.choice-card__dot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.07);
+}
+
+.choice-card__body {
+  min-width: 0;
+}
+.choice-card__name {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+.choice-card__ico {
+  display: inline-grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--brand);
+}
+.choice-card__ico svg {
+  width: 14px;
+  height: 14px;
+}
+.choice-card__desc {
+  display: block;
+  margin-top: 1px;
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 选中角标：默认隐身，选中后弹出 */
+.choice-card__check {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  color: #fff;
+  background: var(--brand);
+  border: 2px solid var(--bg-panel);
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.16s, transform 0.16s var(--ease);
+}
+.choice-card__check svg {
+  width: 10px;
+  height: 10px;
+}
+.choice-card.is-active .choice-card__check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── 面板尾部说明 ────────────────────────────────────────────── */
+
+.appearance-panel__foot {
+  margin-top: var(--gap-sm);
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--text-light);
+}
+
+/* ── 响应式 ──────────────────────────────────────────────────── */
+
+/* 窄屏：两张卡竖排，描述不会被挤成省略号 */
+@media (max-width: 520px) {
+  .choice-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 触屏：关掉悬停位移，避免"粘滞悬停" */
+@media (hover: none) {
+  .choice-card:hover {
+    transform: none;
+    border-color: var(--border);
+  }
+}
+
+/* 动效降级 */
+@media (prefers-reduced-motion: reduce) {
+  .choice-card,
+  .choice-card__check {
+    transition: none;
+  }
+}

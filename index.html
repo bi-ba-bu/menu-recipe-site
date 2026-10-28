@@ -8,6 +8,13 @@
   <meta name="description" content="一周菜单与食谱展示 · 适配 Web 与 App" />
   <title>今日食堂 · 菜单与食谱</title>
   <link rel="stylesheet" href="./css/main.css" />
+  <link rel="stylesheet" href="./css/appearance.css" />
+  <!--
+    可爱风皮肤：常驻加载但默认不生效。
+    每条规则都带 `:root[data-skin="cute"]` 作用域，只有 <html data-skin="cute">
+    时才命中；不设置 data-skin 就是改动前的默认暖橙风格，零影响。
+  -->
+  <link rel="stylesheet" href="./css/skins/cute.css" />
 </head>
 <body>
   <!-- ══ 登录 / 注册页（未登录时显示） ═════════════════════════ -->
@@ -165,10 +172,6 @@
                 data-generate aria-label="一键生成本周菜单" title="一键生成本周菜单">
           <span data-icon="spark" class="gen-ico" aria-hidden="true"></span>
           <span class="topbar__gen-text">一键生成</span>
-        </button>
-
-        <button class="icon-btn" id="themeToggle" aria-label="切换深色模式" title="切换深色模式">
-          <span id="themeIcon" class="theme-ico" aria-hidden="true"></span>
         </button>
       </header>
 
@@ -378,6 +381,11 @@
 
           <!-- 当前家庭详情 -->
           <div id="familyDetail"></div>
+
+          <!-- 外观设置（明暗 + 风格）。内容由 js/appearance.js 渲染：
+               放在「我的家庭」之前，主题是设备级偏好，不该被某一家庭归属，
+               也不会随家庭详情卡重建而被冲掉。 -->
+          <div id="appearanceHost"></div>
 
           <!-- 我加入的家庭列表 -->
           <div class="panel">

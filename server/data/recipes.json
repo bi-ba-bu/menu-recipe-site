@@ -2712,5 +2712,50 @@
     "submittedAt": "",
     "createdAt": "2026-10-23T10:01:21.618872+00:00",
     "updatedAt": "2026-10-23T10:01:21.618872+00:00"
+  },
+  "r_e4fac539be99": {
+    "name": "1",
+    "time": 30,
+    "subtitle": "",
+    "desc": "",
+    "serving": "2 人份",
+    "difficulty": "中等",
+    "tags": [
+      "light"
+    ],
+    "nutrition": {
+      "calorie": 300,
+      "protein": 15.0,
+      "fat": 10.0,
+      "carb": 30.0,
+      "fiber": 3.0
+    },
+    "ingredients": [
+      {
+        "name": "1",
+        "amount": "",
+        "main": true
+      }
+    ],
+    "steps": [
+      {
+        "title": "1",
+        "desc": "",
+        "minutes": 5
+      }
+    ],
+    "tips": "",
+    "cover": "linear-gradient(135deg, #a8edea 0%, #5fb3d4 100%)",
+    "emoji": "🥗",
+    "id": "r_e4fac539be99",
+    "ownerId": "u_afab20534d61",
+    "status": "private",
+    "origin": "user",
+    "reviewNote": "",
+    "reviewedBy": "",
+    "reviewedAt": "",
+    "submittedAt": "",
+    "createdAt": "2026-10-28T07:47:21.296366+00:00",
+    "updatedAt": "2026-10-28T07:47:21.296366+00:00"
   }
 }
